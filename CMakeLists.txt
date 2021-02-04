@@ -156,8 +156,11 @@ else()
     include_directories(
         ${CUDA_INCLUDE_DIRS}
     )
+    string(TOLOWER ${CMAKE_SYSTEM_NAME} platform_name)
+    string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} processor_name)
+    set(CUDNN_ROOT_DIR "${CMAKE_SOURCE_DIR}/cudnn/${processor_name}-${platform_name}" CACHE STRING "cudnn dir" FORCE)
     find_library(CUDNN_LIB cudnn HINTS
-        ${CUDA_TOOLKIT_ROOT_DIR}/lib64 ${CUDNN_ROOT_DIR}/lib64)
+        ${CUDA_TOOLKIT_ROOT_DIR}/lib64 ${CUDNN_ROOT_DIR}/lib)
     find_library(CUBLAS_LIB cublas HINTS
         ${CUDA_TOOLKIT_ROOT_DIR}/lib64)
 
@@ -166,6 +169,7 @@ else()
     endif()
 ########################################### DEPENDENCIES FOR BUILDING OUTSIDE OF NVIDIA ############################################
 endif()
+include_directories(${CUDNN_ROOT_DIR}/include)
 
 find_library_create_target(nvinfer nvinfer SHARED ${TRT_LIB_DIR})
 
